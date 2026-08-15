@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: >
+      Camada bronze: arquivos Parquet imutáveis gravados pela ingestão
+      (ingestao/para_bronze.py). Todas as colunas originais da ANP são
+      texto; a tipagem acontece apenas no staging. O dbt-duckdb lê os
+      Parquet direto do disco via external_location, sem etapa de carga.
+    schema: bronze
+    tables:
+      - name: anp_coletas
+        description: >
+          Coletas de preço por posto revendedor, união de todos os
+          arquivos da ANP presentes em data/bronze/anp/. O parâmetro
+          union_by_name tolera pequenas variações de colunas entre anos.
+        meta:
+          external_location: "read_parquet('{{ env_var(\"BRONZE_GLOB\", \"data/bronze/anp/*.parquet\") }}', union_by_name = true)"
+        loaded_at_field: _ingerido_em
+        freshness:
+          warn_after: {count: 45, period: day}
+          error_after: {count: 120, period: day}

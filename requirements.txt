@@ -1,0 +1,12 @@
+# Dependências do projeto, fixadas nas versões testadas.
+# O ~= aceita correções de bug (último dígito) sem permitir
+# mudanças de comportamento em versões menores.
+duckdb~=1.5.5
+dbt-core~=1.11.12
+dbt-duckdb~=1.11.0
+requests~=2.33.1
+PyYAML~=6.0.3
+dagster~=1.13.17
+dagster-dbt~=0.29.17
+dagster-webserver~=1.13.17
+ruff~=0.16.2

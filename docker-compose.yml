@@ -1,0 +1,12 @@
+# Sobe a interface do Dagster em http://localhost:3000
+# Uso: docker compose up --build
+services:
+  dagster:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      MODO_INGESTAO: amostra
+    volumes:
+      - ./data:/app/data
+      - ./warehouse:/app/warehouse

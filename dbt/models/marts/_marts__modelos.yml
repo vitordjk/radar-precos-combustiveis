@@ -1,0 +1,109 @@
+version: 2
+
+models:
+  - name: dim_produtos
+    description: Um registro por combustível monitorado, com unidade e categoria.
+    columns:
+      - name: produto
+        data_tests:
+          - not_null
+          - unique
+      - name: categoria
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Combustíveis líquidos', 'Gás veicular']
+
+  - name: dim_localidades
+    description: Um registro por município + UF, enriquecido com estado e região.
+    columns:
+      - name: id_localidade
+        data_tests:
+          - not_null
+          - unique
+      - name: regiao
+        description: Região geográfica vinda do seed de estados.
+        data_tests:
+          - not_null
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - uf
+              - municipio
+
+  - name: dim_revendas
+    description: >
+      Um registro por posto (CNPJ), com o nome, endereço e bandeira
+      mais recentes observados nas coletas.
+    columns:
+      - name: cnpj
+        data_tests:
+          - not_null
+          - unique
+
+  - name: fct_coletas_precos
+    description: >
+      Fato no grão posto + produto + data da coleta. Margens só são
+      calculadas quando o valor de compra existe na fonte.
+    columns:
+      - name: id_coleta
+        data_tests:
+          - not_null
+          - unique
+      - name: valor_venda
+        data_tests:
+          - not_null
+      - name: cnpj
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_revendas')
+                field: cnpj
+      - name: produto
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_produtos')
+                field: produto
+      - name: id_localidade
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_localidades')
+                field: id_localidade
+
+  - name: mart_resumo_semanal
+    description: >
+      Resumo semanal de preços por UF e produto: mediana, quartis,
+      extremos e variação percentual contra a semana anterior. Modelo
+      de consumo direto por BI e análises.
+    columns:
+      - name: preco_mediano
+        data_tests:
+          - not_null
+      - name: qtd_coletas
+        data_tests:
+          - not_null
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - semana
+              - uf
+              - produto
+
+exposures:
+  - name: pagina_portfolio_radar
+    label: Página do projeto no portfólio
+    type: dashboard
+    maturity: high
+    url: https://vitordjk.github.io/
+    description: >
+      Página pública do portfólio que apresenta a arquitetura e os
+      resultados construídos sobre mart_resumo_semanal.
+    depends_on:
+      - ref('mart_resumo_semanal')
+    owner:
+      name: Vitor Oliveira

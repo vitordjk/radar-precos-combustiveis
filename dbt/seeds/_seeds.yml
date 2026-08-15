@@ -1,0 +1,10 @@
+version: 2
+
+seeds:
+  - name: seed_estados
+    description: Tabela de apoio com nome e região de cada UF brasileira.
+    columns:
+      - name: uf
+        data_tests:
+          - not_null
+          - unique

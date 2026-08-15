@@ -1,0 +1,27 @@
+name: radar_combustiveis
+version: "1.0.0"
+profile: radar_combustiveis
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+target-path: target
+clean-targets: [target, dbt_packages]
+
+models:
+  radar_combustiveis:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts
+
+seeds:
+  radar_combustiveis:
+    +schema: apoio

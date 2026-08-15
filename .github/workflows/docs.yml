@@ -1,0 +1,64 @@
+# Publica a documentação do dbt no GitHub Pages a cada push na main.
+# O resultado é um site navegável com a descrição de cada modelo,
+# cada coluna, cada teste e o grafo de linhagem completo.
+#
+# Pré-requisito único: em Settings > Pages do repositório,
+# escolher "GitHub Actions" como fonte.
+name: docs
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Ingestão em modo amostra (bronze)
+        run: python ingestao/para_bronze.py --modo amostra
+
+      - name: Instalar pacotes do dbt
+        run: dbt deps --project-dir dbt --profiles-dir dbt
+
+      - name: Build (necessário para o catálogo)
+        run: dbt build --project-dir dbt --profiles-dir dbt
+
+      - name: Gerar documentação
+        run: dbt docs generate --project-dir dbt --profiles-dir dbt
+
+      - name: Empacotar para o Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dbt/target
+
+  publicar:
+    needs: gerar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Publicar no GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

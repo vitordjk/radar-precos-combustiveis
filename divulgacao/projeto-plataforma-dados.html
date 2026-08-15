@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radar de Preços de Combustíveis | Plataforma de dados</title>
+<meta name="description" content="Plataforma de dados ponta a ponta sobre a Série Histórica de Preços da ANP: ingestão versionada, dbt, testes de qualidade, Dagster e integração contínua.">
+<style>
+  :root {
+    --verde-escuro: #0E2E23;
+    --creme: #FFF3D8;
+    --ambar: #F5C84B;
+    --terracota: #E97832;
+    --tinta: #22312A;
+    --tinta-suave: #4A5A50;
+    --papel-card: #FBECC9;
+    --linha: #D8C9A4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--creme);
+    color: var(--tinta);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  h1, h2, h3, .figura-legenda, .ficha-titulo {
+    font-family: Georgia, "Times New Roman", serif;
+  }
+
+  a { color: var(--terracota); text-decoration: none; }
+  a:hover, a:focus-visible { text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--terracota); outline-offset: 2px; }
+
+  .largura { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  /* Cabeçalho */
+  .hero {
+    background: var(--verde-escuro);
+    color: var(--creme);
+    padding: 72px 0 56px;
+  }
+  .hero .rotulo {
+    color: var(--ambar);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-size: clamp(34px, 5.4vw, 52px);
+    line-height: 1.12;
+    font-weight: 400;
+    max-width: 15ch;
+  }
+  .hero .tese {
+    margin-top: 22px;
+    max-width: 58ch;
+    font-size: 19px;
+    color: #E9DEC0;
+  }
+  .hero .meta {
+    margin-top: 34px;
+    font-size: 14.5px;
+    color: #C9BFA2;
+  }
+  .hero .meta strong { color: var(--creme); font-weight: 600; }
+  .hero .acoes { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .botao {
+    display: inline-block;
+    background: var(--ambar);
+    color: var(--verde-escuro);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 11px 20px;
+    border-radius: 2px;
+  }
+  .botao:hover { background: #EDBB33; text-decoration: none; }
+  .botao.vazado {
+    background: transparent;
+    color: var(--creme);
+    border: 1px solid #4E6A5D;
+  }
+  .botao.vazado:hover { border-color: var(--ambar); color: var(--ambar); }
+
+  /* Seções */
+  section { padding: 56px 0 8px; }
+  .num-secao {
+    color: var(--terracota);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--verde-escuro);
+    margin-bottom: 20px;
+  }
+  p + p { margin-top: 14px; }
+  .texto { max-width: 66ch; }
+
+  /* Figura editorial */
+  figure {
+    margin: 34px 0 10px;
+    border-top: 1px solid var(--linha);
+    border-bottom: 1px solid var(--linha);
+    padding: 26px 0 18px;
+  }
+  figure svg { width: 100%; height: auto; display: block; }
+  .figura-legenda {
+    margin-top: 14px;
+    font-size: 14.5px;
+    font-style: italic;
+    color: var(--tinta-suave);
+    max-width: 70ch;
+  }
+  .figura-legenda b { font-style: normal; color: var(--verde-escuro); }
+
+  /* Tabelas editoriais */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15.5px;
+    margin: 22px 0 8px;
+  }
+  caption {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 14.5px;
+    color: var(--tinta-suave);
+    text-align: left;
+    padding-bottom: 10px;
+  }
+  caption b { font-style: normal; color: var(--verde-escuro); }
+  th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--verde-escuro);
+    border-bottom: 2px solid var(--verde-escuro);
+    padding: 8px 14px 8px 0;
+  }
+  td {
+    border-bottom: 1px solid var(--linha);
+    padding: 10px 14px 10px 0;
+    vertical-align: top;
+  }
+  td:first-child { white-space: nowrap; font-weight: 600; }
+
+  /* Lista de decisões */
+  .decisoes { margin-top: 26px; display: grid; gap: 14px; }
+  .decisao {
+    background: var(--papel-card);
+    border-left: 3px solid var(--ambar);
+    padding: 18px 22px;
+  }
+  .decisao h3 {
+    font-size: 18.5px;
+    font-weight: 600;
+    color: var(--verde-escuro);
+    margin-bottom: 6px;
+  }
+  .decisao p { font-size: 15.5px; color: var(--tinta); max-width: none; }
+
+  /* Resultados */
+  .resultados { margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
+  .resultado { border-top: 3px solid var(--verde-escuro); padding-top: 12px; }
+  .resultado .valor {
+    font-family: Georgia, serif;
+    font-size: 34px;
+    color: var(--verde-escuro);
+    line-height: 1.1;
+  }
+  .resultado .descricao { font-size: 14.5px; color: var(--tinta-suave); margin-top: 6px; }
+
+  /* Ficha técnica e rodapé */
+  .ficha {
+    background: var(--verde-escuro);
+    color: var(--creme);
+    margin-top: 64px;
+    padding: 56px 0 64px;
+  }
+  .ficha-titulo { font-size: 26px; font-weight: 400; margin-bottom: 24px; color: var(--creme); }
+  .ficha dl { display: grid; grid-template-columns: 200px 1fr; row-gap: 12px; font-size: 15.5px; }
+  .ficha dt { color: var(--ambar); }
+  .ficha dd { color: #E9DEC0; }
+  .ficha dd a { color: var(--creme); text-decoration: underline; text-decoration-color: #6A8577; }
+  .ficha dd a:hover { text-decoration-color: var(--ambar); }
+  .ficha .volta { margin-top: 40px; font-size: 14.5px; }
+  .ficha .volta a { color: var(--ambar); }
+
+  @media (max-width: 620px) {
+    .ficha dl { grid-template-columns: 1fr; row-gap: 4px; }
+    .ficha dd { margin-bottom: 10px; }
+    td:first-child { white-space: normal; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="largura">
+    <p class="rotulo">Projeto 02 &middot; Plataforma de dados</p>
+    <h1>Radar de Preços de Combustíveis</h1>
+    <p class="tese">Uma plataforma ponta a ponta sobre os dados abertos da ANP:
+    ingestão versionada, camadas bronze, staging e marts, 29 testes de
+    qualidade por execução, orquestração semanal e um pipeline que roda
+    inteiro a cada alteração no código.</p>
+    <p class="meta"><strong>Pilha:</strong> Python &middot; DuckDB &middot; dbt &middot; Dagster &middot; GitHub Actions &middot; Parquet</p>
+    <div class="acoes">
+      <a class="botao" href="https://github.com/SEU_USUARIO/radar-precos-combustiveis" rel="noopener">Ver repositório</a>
+      <a class="botao vazado" href="https://SEU_USUARIO.github.io/radar-precos-combustiveis/" rel="noopener">Documentação do dbt</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="largura">
+      <p class="num-secao">01</p>
+      <h2>O problema</h2>
+      <div class="texto">
+        <p>A ANP publica toda semana os preços coletados em milhares de
+        postos do país. O dado é público, mas chega cru: arquivos que
+        alternam entre Latin-1 e UTF-8 conforme o ano, CNPJ com e sem
+        máscara, decimal com vírgula, valor de compra ausente na maior
+        parte das linhas, fontes que se sobrepõem de propósito e linhas
+        duplicadas.</p>
+        <p>Quem precisa responder "onde o preço da gasolina está fora da
+        curva nesta semana" não consegue trabalhar sobre o arquivo bruto.
+        Precisa de uma base confiável, testada e que se atualize sem
+        intervenção manual. Construir essa base é o projeto.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="largura">
+      <p class="num-secao">02</p>
+      <h2>A arquitetura</h2>
+      <div class="texto">
+        <p>O dado atravessa quatro estágios, cada um com uma
+        responsabilidade única. Errou a margem, o problema está na fato.
+        Apareceu duplicata, o problema está na camada intermediária. Essa
+        separação é o que torna o pipeline manutenível por outra pessoa.</p>
+      </div>
+      <figure>
+        <svg viewBox="0 0 860 250" role="img" aria-label="Diagrama do fluxo de dados: fontes da ANP, ingestão em Python, camada bronze em Parquet, transformação em dbt até os marts, com Dagster orquestrando e GitHub Actions protegendo o código">
+          <!-- trilho -->
+          <line x1="30" y1="96" x2="830" y2="96" stroke="#D8C9A4" stroke-width="1"/>
+          <!-- Bloco 1: Fonte -->
+          <rect x="20" y="56" width="150" height="80" fill="#0E2E23"/>
+          <text x="95" y="88" text-anchor="middle" fill="#FFF3D8" font-family="Segoe UI, sans-serif" font-size="15" font-weight="600">ANP</text>
+          <text x="95" y="108" text-anchor="middle" fill="#C9BFA2" font-family="Segoe UI, sans-serif" font-size="11.5">semestrais + semanais</text>
+          <!-- seta -->
+          <polygon points="188,96 176,90 176,102" fill="#E97832"/>
+          <line x1="170" y1="96" x2="176" y2="96" stroke="#E97832" stroke-width="2"/>
+          <!-- Bloco 2: Ingestão -->
+          <rect x="192" y="56" width="150" height="80" fill="#E97832"/>
+          <text x="267" y="88" text-anchor="middle" fill="#FFF3D8" font-family="Segoe UI, sans-serif" font-size="15" font-weight="600">Ingestão</text>
+          <text x="267" y="108" text-anchor="middle" fill="#FFF3D8" font-family="Segoe UI, sans-serif" font-size="11.5">Python · hash · ZIP</text>
+          <!-- seta -->
+          <polygon points="360,96 348,90 348,102" fill="#E97832"/>
+          <line x1="342" y1="96" x2="348" y2="96" stroke="#E97832" stroke-width="2"/>
+          <!-- Bloco 3: Bronze -->
+          <rect x="364" y="56" width="150" height="80" fill="#694B35"/>
+          <text x="439" y="88" text-anchor="middle" fill="#FFF3D8" font-family="Segoe UI, sans-serif" font-size="15" font-weight="600">Bronze</text>
+          <text x="439" y="108" text-anchor="middle" fill="#EBD9C4" font-family="Segoe UI, sans-serif" font-size="11.5">Parquet imutável</text>
+          <!-- seta -->
+          <polygon points="532,96 520,90 520,102" fill="#E97832"/>
+          <line x1="514" y1="96" x2="520" y2="96" stroke="#E97832" stroke-width="2"/>
+          <!-- Bloco 4: dbt (staging + marts) -->
+          <rect x="536" y="36" width="150" height="56" fill="#9CAF88"/>
+          <text x="611" y="60" text-anchor="middle" fill="#0E2E23" font-family="Segoe UI, sans-serif" font-size="14" font-weight="600">Staging</text>
+          <text x="611" y="78" text-anchor="middle" fill="#22312A" font-family="Segoe UI, sans-serif" font-size="11.5">tipos e padronização</text>
+          <rect x="536" y="100" width="150" height="56" fill="#F5C84B"/>
+          <text x="611" y="124" text-anchor="middle" fill="#0E2E23" font-family="Segoe UI, sans-serif" font-size="14" font-weight="600">Marts</text>
+          <text x="611" y="142" text-anchor="middle" fill="#22312A" font-family="Segoe UI, sans-serif" font-size="11.5">estrela + resumo semanal</text>
+          <line x1="611" y1="92" x2="611" y2="100" stroke="#0E2E23" stroke-width="2"/>
+          <!-- seta final -->
+          <polygon points="704,96 692,90 692,102" fill="#E97832"/>
+          <line x1="686" y1="96" x2="692" y2="96" stroke="#E97832" stroke-width="2"/>
+          <!-- Bloco 5: Consumo -->
+          <rect x="708" y="56" width="132" height="80" fill="#0E2E23"/>
+          <text x="774" y="84" text-anchor="middle" fill="#FFF3D8" font-family="Segoe UI, sans-serif" font-size="14" font-weight="600">Consumo</text>
+          <text x="774" y="102" text-anchor="middle" fill="#C9BFA2" font-family="Segoe UI, sans-serif" font-size="11.5">BI · análises</text>
+          <text x="774" y="118" text-anchor="middle" fill="#C9BFA2" font-family="Segoe UI, sans-serif" font-size="11.5">docs públicas</text>
+          <!-- Faixa inferior: orquestração e CI -->
+          <rect x="20" y="188" width="400" height="42" fill="none" stroke="#0E2E23" stroke-width="1.5"/>
+          <text x="40" y="214" fill="#0E2E23" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600">Dagster</text>
+          <text x="112" y="214" fill="#4A5A50" font-family="Segoe UI, sans-serif" font-size="12.5">orquestra tudo · agenda semanal · linhagem visível</text>
+          <rect x="440" y="188" width="400" height="42" fill="none" stroke="#0E2E23" stroke-width="1.5"/>
+          <text x="460" y="214" fill="#0E2E23" font-family="Segoe UI, sans-serif" font-size="13" font-weight="600">GitHub Actions</text>
+          <text x="588" y="214" fill="#4A5A50" font-family="Segoe UI, sans-serif" font-size="12.5">pipeline completo a cada alteração no código</text>
+          <line x1="220" y1="188" x2="220" y2="140" stroke="#0E2E23" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="640" y1="188" x2="640" y2="160" stroke="#0E2E23" stroke-width="1" stroke-dasharray="4 4"/>
+        </svg>
+        <figcaption class="figura-legenda"><b>Figura 1.</b> Fluxo do dado, do
+        portal da ANP ao consumo. A ingestão só reprocessa o que mudou
+        (comparação por hash), o bronze preserva o original sem conversões
+        e o dbt concentra toda a transformação em camadas testáveis.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="largura">
+      <p class="num-secao">03</p>
+      <h2>Qualidade como contrato</h2>
+      <div class="texto">
+        <p>São 29 testes executados em toda construção da base, e a parte
+        que importa não é o número: é a distinção deliberada entre erro e
+        aviso. Erro bloqueia o pipeline. Aviso pede um olhar humano sem
+        parar a operação.</p>
+      </div>
+      <table>
+        <caption><b>Tabela 1.</b> Os três testes de regra de negócio e o que cada um protege.</caption>
+        <thead>
+          <tr><th>Teste</th><th>Severidade</th><th>Protege contra</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Faixa plausível de preço</td>
+            <td>Erro</td>
+            <td>Erro de unidade ou de conversão decimal chegando ao consumo</td>
+          </tr>
+          <tr>
+            <td>Margem negativa incomum</td>
+            <td>Aviso</td>
+            <td>Degradação da fonte ou da limpeza; margem negativa real existe, o teste acusa quando a proporção passa de 5%</td>
+          </tr>
+          <tr>
+            <td>Taxa de exclusão da limpeza</td>
+            <td>Aviso</td>
+            <td>O próprio pipeline descartando dado demais sem ninguém perceber</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="largura">
+      <p class="num-secao">04</p>
+      <h2>Decisões de engenharia</h2>
+      <div class="texto">
+        <p>O repositório mantém um registro de decisões com as
+        alternativas descartadas e o custo aceito em cada uma. As cinco
+        centrais, em resumo:</p>
+      </div>
+      <div class="decisoes">
+        <div class="decisao">
+          <h3>DuckDB como warehouse</h3>
+          <p>Motor colunar embutido: warehouse é um arquivo, sem servidor
+          para operar. Dimensionado ao volume real do problema; a migração
+          para nuvem, se necessária, é uma troca de adaptador no dbt.</p>
+        </div>
+        <div class="decisao">
+          <h3>Dagster em vez de Airflow</h3>
+          <p>Orquestração por assets: o grafo declara o que cada dado é e
+          de que dados depende. A linhagem vai do download da ANP ao mart
+          final como um fluxo único e visível.</p>
+        </div>
+        <div class="decisao">
+          <h3>Bronze fiel ao original</h3>
+          <p>Tudo entra como texto, com metadados de origem e de ingestão.
+          Tipagem só no staging, onde erro de conversão vira alerta
+          testável em vez de falha silenciosa.</p>
+        </div>
+        <div class="decisao">
+          <h3>Deduplicação determinística</h3>
+          <p>As fontes da ANP se sobrepõem de propósito. A regra vive num
+          único lugar: para cada posto, produto e data, vence a linha
+          ingerida mais recentemente. Mil execuções, um resultado.</p>
+        </div>
+        <div class="decisao">
+          <h3>Fixtures versionadas para a integração contínua</h3>
+          <p>Dados de exemplo no formato exato da ANP, com os defeitos
+          reais reproduzidos, permitem que o pipeline inteiro rode a cada
+          alteração sem depender de portal externo no ar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="largura">
+      <p class="num-secao">05</p>
+      <h2>Resultados</h2>
+      <div class="resultados">
+        <div class="resultado">
+          <div class="valor">29</div>
+          <div class="descricao">testes de qualidade executados em toda construção da base</div>
+        </div>
+        <div class="resultado">
+          <div class="valor">~3 s</div>
+          <div class="descricao">para o pipeline completo sobre a base de exemplo: ingestão, 7 modelos, seed e testes</div>
+        </div>
+        <div class="resultado">
+          <div class="valor">2</div>
+          <div class="descricao">encodings distintos (Latin-1 e UTF-8) processados de forma transparente</div>
+        </div>
+        <div class="resultado">
+          <div class="valor">100%</div>
+          <div class="descricao">do pipeline executado pela integração contínua a cada alteração; sem testes verdes, sem merge</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="ficha">
+  <div class="largura">
+    <p class="ficha-titulo">Ficha técnica</p>
+    <dl>
+      <dt>Fonte de dados</dt>
+      <dd>Série Histórica de Preços de Combustíveis, ANP (dados abertos)</dd>
+      <dt>Ingestão</dt>
+      <dd>Python com manifesto de fontes, comparação por hash SHA-256 e suporte a ZIP</dd>
+      <dt>Armazenamento</dt>
+      <dd>Parquet (bronze) e DuckDB (staging e marts)</dd>
+      <dt>Transformação</dt>
+      <dd>dbt: staging, intermediate e marts em estrela, com macros e seed de apoio</dd>
+      <dt>Orquestração</dt>
+      <dd>Dagster, grafo de assets com agendamento semanal</dd>
+      <dt>Automação</dt>
+      <dd>GitHub Actions: pipeline por pull request e documentação publicada no Pages</dd>
+      <dt>Repositório</dt>
+      <dd><a href="https://github.com/SEU_USUARIO/radar-precos-combustiveis" rel="noopener">github.com/SEU_USUARIO/radar-precos-combustiveis</a></dd>
+      <dt>Documentação</dt>
+      <dd><a href="https://SEU_USUARIO.github.io/radar-precos-combustiveis/" rel="noopener">Modelos, colunas, testes e linhagem (dbt docs)</a></dd>
+      <dt>Autor</dt>
+      <dd>Vitor Oliveira &middot; <a href="https://linkedin.com/in/vitor-oliveira-722549165" rel="noopener">LinkedIn</a></dd>
+    </dl>
+    <p class="volta"><a href="index.html">Voltar ao portfólio</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

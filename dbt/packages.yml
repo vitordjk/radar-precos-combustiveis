@@ -1,0 +1,6 @@
+# Pacotes do dbt usados pelo projeto.
+# O dbt_utils vem do hub oficial (hub.getdbt.com), baixado como arquivo
+# pelo proprio dbt deps: nao exige Git instalado na maquina.
+packages:
+  - package: dbt-labs/dbt_utils
+    version: [">=1.3.0", "<1.4.0"]

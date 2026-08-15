@@ -1,0 +1,28 @@
+# Manifesto de fontes da ANP.
+# URLs verificadas em 11/08/2026 na página oficial:
+# https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/serie-historica-de-precos-de-combustiveis
+#
+# Padrão da ANP:
+#   - Arquivos semestrais de combustíveis automotivos a partir de 2022-02 vêm em ZIP.
+#   - Os arquivos de "últimas 4 semanas" são CSV e são atualizados toda semana.
+#     Eles se sobrepõem aos semestrais de propósito: a deduplicação determinística
+#     acontece na camada intermediate do dbt (chave posto + produto + data).
+#
+# Para ampliar o histórico, adicione mais semestres seguindo o mesmo padrão de URL.
+
+fontes:
+  - nome: ca-2025-02
+    tipo: zip
+    url: https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/dsas/ca/ca-2025-02.zip
+
+  - nome: ca-2026-01
+    tipo: zip
+    url: https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/dsas/ca/ca-2026-01.zip
+
+  - nome: ultimas-4-semanas-gasolina-etanol
+    tipo: csv
+    url: https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/qus/ultimas-4-semanas-gasolina-etanol.csv
+
+  - nome: ultimas-4-semanas-diesel-gnv
+    tipo: csv
+    url: https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/qus/ultimas-4-semanas-diesel-gnv.csv

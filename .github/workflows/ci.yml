@@ -1,0 +1,38 @@
+# Integração contínua: roda a cada push e pull request.
+# Executa o pipeline inteiro contra os dados de exemplo, que existem
+# exatamente para isso: validar código sem depender de download externo.
+# Se qualquer teste de qualidade do dbt falhar, o merge fica bloqueado.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Lint do código Python
+        run: ruff check .
+
+      - name: Ingestão em modo amostra (bronze)
+        run: python ingestao/para_bronze.py --modo amostra
+
+      - name: Instalar pacotes do dbt
+        run: dbt deps --project-dir dbt --profiles-dir dbt
+
+      - name: Build completo do dbt com testes
+        run: dbt build --project-dir dbt --profiles-dir dbt

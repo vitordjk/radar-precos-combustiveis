@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: stg_anp__coletas
+    description: >
+      Coletas de preço tipadas e renomeadas, sem deduplicação nem
+      filtros. Espelho fiel da fonte com tipos corretos: se um valor
+      não converte, vira NULL e os testes das camadas seguintes acusam.
+    columns:
+      - name: cnpj
+        description: CNPJ do posto revendedor, apenas dígitos.
+      - name: produto
+        description: Combustível em caixa alta, como publicado pela ANP.
+      - name: data_coleta
+        description: Data em que o preço foi coletado no posto.
+        data_tests:
+          - not_null
+      - name: valor_venda
+        description: Preço de venda ao consumidor, em reais, decimal com ponto.
+      - name: valor_compra
+        description: >
+          Preço de aquisição informado pelo posto. Ausente na maior
+          parte das coletas; por isso não recebe teste de not_null.
+
+  - name: int_coletas_validadas
+    description: >
+      Coletas deduplicadas (posto + produto + data, vence a ingestão
+      mais recente) e com regras mínimas de validade aplicadas: preço
+      de venda positivo, data presente e CNPJ com 14 dígitos.
+    columns:
+      - name: id_coleta
+        description: Chave substituta da coleta (hash de cnpj + produto + data).
+        data_tests:
+          - not_null
+          - unique
+      - name: valor_venda
+        data_tests:
+          - not_null
+      - name: cnpj
+        data_tests:
+          - not_null

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitor Oliveira | Dados e BI</title>
+<meta name="description" content="Portfólio de dados de Vitor Oliveira: BI descritivo com distribuição automática, plataforma de dados versionada e testada, e produto preditivo de apoio à decisão.">
+<style>
+  :root {
+    --verde-escuro: #0E2E23;
+    --creme: #FFF3D8;
+    --ambar: #F5C84B;
+    --terracota: #E97832;
+    --tinta: #22312A;
+    --tinta-suave: #4A5A50;
+    --papel-card: #FBECC9;
+    --linha: #D8C9A4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--creme);
+    color: var(--tinta);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  h1, h2, h3, .numeros .valor, .assinatura { font-family: Georgia, "Times New Roman", serif; }
+
+  a { color: var(--terracota); text-decoration: none; }
+  a:hover, a:focus-visible { text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--terracota); outline-offset: 2px; }
+
+  .largura { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* Cabeçalho */
+  .hero {
+    background: var(--verde-escuro);
+    color: var(--creme);
+    padding: 76px 0 60px;
+  }
+  .hero .rotulo {
+    color: var(--ambar);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 5.6vw, 56px);
+    line-height: 1.1;
+    font-weight: 400;
+    max-width: 20ch;
+  }
+  .hero .tese {
+    margin-top: 22px;
+    max-width: 60ch;
+    font-size: 19px;
+    color: #E9DEC0;
+  }
+  .hero .contato { margin-top: 32px; font-size: 15px; color: #C9BFA2; }
+  .hero .contato a { color: var(--creme); text-decoration: underline; text-decoration-color: #6A8577; }
+  .hero .contato a:hover { text-decoration-color: var(--ambar); }
+
+  /* Faixa de números */
+  .numeros {
+    background: var(--verde-escuro);
+    border-top: 1px solid #24463A;
+    color: var(--creme);
+    padding: 34px 0 40px;
+  }
+  .numeros .grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 26px;
+  }
+  .numeros .valor { font-size: 38px; line-height: 1.05; color: var(--ambar); }
+  .numeros .descricao { font-size: 14px; color: #C9BFA2; margin-top: 6px; max-width: 24ch; }
+
+  /* Tese dos três projetos */
+  .arco { padding: 64px 0 8px; }
+  .arco h2 {
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--verde-escuro);
+    margin-bottom: 18px;
+  }
+  .arco .texto { max-width: 68ch; }
+  .arco .texto p + p { margin-top: 14px; }
+
+  /* Projetos */
+  .projetos { padding: 40px 0 24px; display: grid; gap: 28px; }
+  .projeto {
+    background: var(--papel-card);
+    border: 1px solid var(--linha);
+    border-top: 4px solid var(--verde-escuro);
+    padding: 30px 32px 28px;
+  }
+  .projeto .cabecalho {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+    margin-bottom: 6px;
+  }
+  .projeto .indice {
+    color: var(--terracota);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+  }
+  .projeto .etapa {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+  }
+  .projeto h3 {
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--verde-escuro);
+    margin: 4px 0 12px;
+  }
+  .projeto .pergunta {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--tinta-suave);
+    margin-bottom: 14px;
+  }
+  .projeto p.descricao { max-width: 72ch; }
+  .projeto ul {
+    margin: 14px 0 0 0;
+    padding-left: 20px;
+    max-width: 72ch;
+  }
+  .projeto li { margin-top: 6px; font-size: 15.5px; }
+  .projeto .pilha {
+    margin-top: 18px;
+    font-size: 14px;
+    color: var(--tinta-suave);
+  }
+  .projeto .pilha strong { color: var(--verde-escuro); font-weight: 600; }
+  .projeto .links { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .botao {
+    display: inline-block;
+    background: var(--verde-escuro);
+    color: var(--creme);
+    font-weight: 600;
+    font-size: 14.5px;
+    padding: 10px 18px;
+    border-radius: 2px;
+  }
+  .botao:hover { background: #15402F; text-decoration: none; }
+  .botao.secundario {
+    background: transparent;
+    color: var(--verde-escuro);
+    border: 1px solid var(--verde-escuro);
+  }
+  .botao.secundario:hover { background: var(--ambar); border-color: var(--ambar); }
+
+  /* Princípios de trabalho */
+  .principios { padding: 40px 0 8px; }
+  .principios h2 { font-size: 30px; font-weight: 400; color: var(--verde-escuro); margin-bottom: 22px; }
+  .principios .grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px 30px;
+  }
+  .principio { border-top: 2px solid var(--ambar); padding-top: 12px; }
+  .principio h3 { font-size: 17.5px; font-weight: 600; color: var(--verde-escuro); margin-bottom: 6px; font-family: "Segoe UI", sans-serif; }
+  .principio p { font-size: 15px; color: var(--tinta); }
+
+  /* Rodapé */
+  .rodape {
+    background: var(--verde-escuro);
+    color: var(--creme);
+    margin-top: 64px;
+    padding: 52px 0 60px;
+  }
+  .rodape h2 { font-size: 26px; font-weight: 400; margin-bottom: 14px; font-family: Georgia, serif; }
+  .rodape p { max-width: 60ch; color: #E9DEC0; }
+  .rodape .canais { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .rodape .botao { background: var(--ambar); color: var(--verde-escuro); }
+  .rodape .botao:hover { background: #EDBB33; }
+  .rodape .botao.secundario {
+    background: transparent;
+    color: var(--creme);
+    border: 1px solid #4E6A5D;
+  }
+  .rodape .botao.secundario:hover { border-color: var(--ambar); color: var(--ambar); background: transparent; }
+  .assinatura { margin-top: 40px; font-size: 14px; color: #C9BFA2; font-style: italic; }
+
+  @media (max-width: 620px) {
+    .projeto { padding: 24px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="largura">
+    <p class="rotulo">Vitor Oliveira &middot; Dados e BI</p>
+    <h1>Dado confiável, decisão melhor.</h1>
+    <p class="tese">Analista de dados com foco em transformar dado bruto em
+    decisão de negócio: relatórios que chegam sozinhos a quem decide,
+    pipelines testados que não dependem de memória humana e modelos que
+    apontam o próximo passo.</p>
+    <p class="contato">
+      <a href="https://linkedin.com/in/vitor-oliveira-722549165" rel="noopener">LinkedIn</a>
+      &nbsp;&middot;&nbsp;
+      <!-- Substituir SEU_USUARIO pelo seu usuário do GitHub -->
+      <a href="https://github.com/SEU_USUARIO" rel="noopener">GitHub</a>
+    </p>
+  </div>
+</header>
+
+<div class="numeros">
+  <div class="largura">
+    <div class="grade">
+      <div>
+        <div class="valor">3,4 mi</div>
+        <div class="descricao">de linhas simuladas no banco do projeto Aurora Alimentos</div>
+      </div>
+      <div>
+        <div class="valor">40</div>
+        <div class="descricao">medidas DAX no modelo semântico, em 9 telas geradas de um único CSS</div>
+      </div>
+      <div>
+        <div class="valor">29</div>
+        <div class="descricao">testes de qualidade por execução na plataforma de dados da ANP</div>
+      </div>
+      <div>
+        <div class="valor">4</div>
+        <div class="descricao">audiências recebem alertas automáticos por e-mail, do vendedor ao diretor</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <section class="arco">
+    <div class="largura">
+      <h2>Três projetos, uma história</h2>
+      <div class="texto">
+        <p>Cada projeto do portfólio responde a uma pergunta diferente do
+        ciclo de decisão, na ordem em que uma empresa amadurece com dados:
+        primeiro enxergar o que está acontecendo, depois garantir que o
+        dado por trás disso é confiável e chega sozinho, por fim
+        antecipar o que vem e recomendar o que fazer.</p>
+        <p>Nenhum repete o outro: mudam o domínio de negócio, a
+        arquitetura e as ferramentas, de propósito.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="projetos largura">
+
+    <article class="projeto">
+      <div class="cabecalho">
+        <span class="indice">PROJETO 01</span>
+        <span class="etapa">Descritivo e distribuição</span>
+      </div>
+      <h3>Aurora Alimentos</h3>
+      <p class="pergunta">O que está acontecendo no negócio, e quem precisa saber já sabe?</p>
+      <p class="descricao">Operação completa de BI para uma indústria de
+      laticínios fictícia: banco PostgreSQL com 3,4 milhões de linhas
+      simuladas (30 distribuidores, 250 lojas, 48 produtos, 18 meses de
+      movimento), modelo estrela com visões materializadas, painel em
+      Power BI e um sistema de alertas em Python que envia por e-mail,
+      para cada audiência, apenas o que ela precisa decidir.</p>
+      <ul>
+        <li>Cobertura de estoque calculada de forma ponderada, não por
+        média simples: no caso base, a diferença é 9,4 contra 15,2 dias,
+        suficiente para inverter uma decisão de compra.</li>
+        <li>Estimador de risco de ruptura validado contra a simulação,
+        com erro medido de 5,4% para menos.</li>
+        <li>Motor de sugestão de pedido e alertas segmentados para
+        vendedor, gestor, diretor e reposição.</li>
+      </ul>
+      <p class="pilha"><strong>Pilha:</strong> PostgreSQL &middot; Python &middot; Power BI e DAX &middot; HTML e CSS &middot; SMTP</p>
+      <div class="links">
+        <!-- Substituir SEU_USUARIO e conferir o nome do repositório -->
+        <a class="botao" href="https://github.com/SEU_USUARIO/aurora-alimentos" rel="noopener">Repositório</a>
+      </div>
+    </article>
+
+    <article class="projeto">
+      <div class="cabecalho">
+        <span class="indice">PROJETO 02</span>
+        <span class="etapa">Engenharia e confiabilidade</span>
+      </div>
+      <h3>Radar de Preços de Combustíveis</h3>
+      <p class="pergunta">Como garantir que o dado que alimenta tudo é confiável e chega sozinho?</p>
+      <p class="descricao">Plataforma de dados ponta a ponta sobre a Série
+      Histórica de Preços da ANP: ingestão versionada com comparação por
+      hash, arquitetura em camadas (bronze em Parquet, staging e marts em
+      DuckDB via dbt), orquestração com Dagster e integração contínua que
+      executa o pipeline inteiro a cada alteração no código.</p>
+      <ul>
+        <li>29 testes de qualidade em toda construção da base, com
+        severidades deliberadas: erro bloqueia o pipeline, aviso pede
+        investigação sem parar a operação.</li>
+        <li>Execução idempotente comprovada: rodar duas vezes não duplica
+        nada, e a deduplicação entre fontes sobrepostas é determinística.</li>
+        <li>Sem testes verdes, sem merge: a integração contínua roda o
+        pipeline completo contra dados de exemplo versionados.</li>
+      </ul>
+      <p class="pilha"><strong>Pilha:</strong> Python &middot; DuckDB &middot; dbt &middot; Dagster &middot; GitHub Actions &middot; Parquet</p>
+      <div class="links">
+        <a class="botao" href="projeto-plataforma-dados.html">Página do projeto</a>
+        <!-- Substituir SEU_USUARIO -->
+        <a class="botao secundario" href="https://github.com/SEU_USUARIO/radar-precos-combustiveis" rel="noopener">Repositório</a>
+      </div>
+    </article>
+
+    <article class="projeto">
+      <div class="cabecalho">
+        <span class="indice">PROJETO 03</span>
+        <span class="etapa">Preditivo e prescritivo</span>
+      </div>
+      <h3>Previsão de demanda e apoio à decisão</h3>
+      <p class="pergunta">O que vai acontecer, e o que fazer a respeito?</p>
+      <p class="descricao">Produto de dados que fecha o ciclo: previsão de
+      demanda validada por backtesting temporal (o modelo só é aprovado
+      se acertar em janelas que nunca viu), estimativa de elasticidade de
+      preço e uma camada de otimização que transforma previsão em
+      recomendação respeitando restrições reais do negócio.</p>
+      <!-- Quando o projeto for publicado, inserir aqui os números reais:
+           erro do backtesting (por exemplo, WMAPE por janela), ganho da
+           otimização contra a política atual e o link do repositório.
+           Não publicar números que não saíram de execução real. -->
+      <ul>
+        <li>Backtesting com janelas deslizantes no tempo, nunca validação
+        aleatória: série temporal exige honestidade cronológica.</li>
+        <li>Elasticidade estimada por produto para responder o que
+        acontece com a demanda quando o preço muda.</li>
+        <li>Interface de simulação para quem decide, com modelos
+        versionados e comparáveis entre si.</li>
+      </ul>
+      <p class="pilha"><strong>Pilha:</strong> Python &middot; Streamlit &middot; MLflow &middot; scikit-learn</p>
+      <div class="links">
+        <!-- Substituir pelo link real quando o repositório for publicado -->
+        <a class="botao secundario" href="https://github.com/SEU_USUARIO" rel="noopener">Repositório</a>
+      </div>
+    </article>
+
+  </section>
+
+  <section class="principios">
+    <div class="largura">
+      <h2>Como eu trabalho</h2>
+      <div class="grade">
+        <div class="principio">
+          <h3>Número antes de adjetivo</h3>
+          <p>Todo projeto entrega resultado medido: erro do estimador,
+          taxa de exclusão da limpeza, diferença entre a métrica certa e a
+          errada. Se não dá para medir, ainda não terminou.</p>
+        </div>
+        <div class="principio">
+          <h3>A estatística certa é decisão de engenharia</h3>
+          <p>Cobertura ponderada em vez de média simples, mediana em vez
+          de média em preços com cauda. A escolha errada produz um painel
+          bonito que induz a decisão errada.</p>
+        </div>
+        <div class="principio">
+          <h3>Falhar de forma visível</h3>
+          <p>Pipelines que quebram em silêncio custam caro. Meus projetos
+          tratam erro e anomalia de formas diferentes e testam o próprio
+          processo de limpeza, não só o dado.</p>
+        </div>
+        <div class="principio">
+          <h3>Documentar a decisão, não só o código</h3>
+          <p>Cada repositório registra as alternativas descartadas e o
+          custo aceito. É o documento que eu gostaria de encontrar em todo
+          projeto herdado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="largura">
+    <h2>Contato</h2>
+    <p>Aberto a conversas sobre vagas e projetos de dados, BI e analytics
+    engineering. O caminho mais rápido é o LinkedIn.</p>
+    <div class="canais">
+      <a class="botao" href="https://linkedin.com/in/vitor-oliveira-722549165" rel="noopener">LinkedIn</a>
+      <!-- Substituir SEU_USUARIO pelo seu usuário do GitHub -->
+      <a class="botao secundario" href="https://github.com/SEU_USUARIO" rel="noopener">GitHub</a>
+    </div>
+    <p class="assinatura">Feito à mão, em HTML e CSS, sem frameworks. Como o resto do portfólio.</p>
+  </div>
+</footer>
+
+</body>
+</html>

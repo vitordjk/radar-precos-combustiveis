@@ -1,0 +1,11 @@
+# Perfil de conexão do dbt com o DuckDB.
+# O caminho pode ser sobrescrito pela variável de ambiente DUCKDB_PATH.
+# Padrão pensado para execução a partir da raiz do repositório:
+#   dbt build --project-dir dbt --profiles-dir dbt
+radar_combustiveis:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', 'warehouse/radar.duckdb') }}"
+      threads: 4
