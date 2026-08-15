@@ -28,6 +28,9 @@ jobs:
       - name: Lint do código Python
         run: ruff check .
 
+      - name: Preparar pastas de trabalho
+        run: mkdir -p warehouse data/bronze/anp
+
       - name: Ingestão em modo amostra (bronze)
         run: python ingestao/para_bronze.py --modo amostra
 

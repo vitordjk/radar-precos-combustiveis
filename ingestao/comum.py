@@ -18,6 +18,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 DIR_DOWNLOADS = RAIZ / "data" / "downloads"
 DIR_BRONZE = RAIZ / "data" / "bronze" / "anp"
 DIR_EXEMPLO = RAIZ / "dados_exemplo"
+DIR_WAREHOUSE = RAIZ / "warehouse"
 ARQUIVO_ESTADO = RAIZ / "data" / "estado_ingestao.json"
 
 
@@ -25,6 +26,9 @@ def garantir_diretorios() -> None:
     """Cria os diretórios de trabalho caso não existam."""
     DIR_DOWNLOADS.mkdir(parents=True, exist_ok=True)
     DIR_BRONZE.mkdir(parents=True, exist_ok=True)
+    # O DuckDB cria o arquivo do banco, mas não a pasta que o contém.
+    # Garantir a pasta aqui evita falha do dbt em máquina recém-clonada.
+    DIR_WAREHOUSE.mkdir(parents=True, exist_ok=True)
 
 
 def hash_arquivo(caminho: Path) -> str:
